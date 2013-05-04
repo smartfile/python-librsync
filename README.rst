@@ -1,6 +1,6 @@
-.. figure:: https://travis-ci.org/smartfile/python-libarchive.png
+.. figure:: https://travis-ci.org/smartfile/python-librsync.png
    :alt: Travis CI Status
-   :target: https://travis-ci.org/smartfile/python-libarchive
+   :target: https://travis-ci.org/smartfile/python-librsync
 
 A `SmartFile`_ Open Source project. `Read more`_ about how SmartFile
 uses and contributes to Open Source software.
