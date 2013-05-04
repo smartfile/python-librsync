@@ -6,7 +6,11 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-_librsync = ctypes.cdll.LoadLibrary('librsync.so.1')
+try:
+    _librsync = ctypes.cdll.LoadLibrary('librsync.so.1')
+except OSError:
+    raise ImportError('You must install librsync to use this library. Use your '
+                      'system\'s package manager to install it.')
 
 
 MAX_SPOOL = 1024 ** 2 * 5
@@ -31,7 +35,8 @@ class Buffer(ctypes.Structure):
     ]
 
 
-patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t, ctypes.POINTER(Buffer))
+patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t,
+                                  ctypes.POINTER(Buffer))
 
 
 class LibRsyncError(Exception):
@@ -51,10 +56,12 @@ def _execute(job, f, o=None):
     while True:
         block = f.read(RS_JOB_BLOCKSIZE)
         buff = Buffer()
-        buff.next_out = ctypes.cast(out, ctypes.c_char_p)
+        # provide the data block via input buffer.
         buff.next_in = ctypes.c_char_p(block)
         buff.avail_in = ctypes.c_size_t(len(block))
         buff.eof_in = ctypes.c_int(not block)
+        # Set up our buffer for output.
+        buff.next_out = ctypes.cast(out, ctypes.c_char_p)
         buff.avail_out = ctypes.c_size_t(RS_JOB_BLOCKSIZE)
         result = _librsync.rs_job_iter(job, ctypes.byref(buff))
         if o:
@@ -62,10 +69,19 @@ def _execute(job, f, o=None):
         if result == RS_DONE:
             break
         elif result != RS_BLOCKED:
+            # TODO: I don't think error reporting works properly.
             raise LibRsyncError(result)
+    o.seek(0)
+    return o
 
 
 def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
+    """
+    Generate a signature for the file `f`. The signature will be written to `s`.
+    If `s` is omitted, a temporary file will be used. This function returns the
+    signature file `s`. You can specify the size of the blocks using the
+    optional `block_size` parameter.
+    """
     if s is None:
         s = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
     job = _librsync.rs_sig_begin(block_size, RS_DEFAULT_STRONG_LEN)
@@ -73,11 +89,16 @@ def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
         _execute(job, f, s)
     finally:
         _librsync.rs_job_free(job)
-    s.seek(0)
     return s
 
 
 def delta(f, s, d=None):
+    """
+    Create a delta for the file `f` using the signature read from `s`. The delta
+    will be written to `d`. If `d` is omitted, a temporary file will be used.
+    This function returns the delta file `d`. All parameters must be file-like
+    objects.
+    """
     if d is None:
         d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
     sig = ctypes.c_void_p()
@@ -95,11 +116,18 @@ def delta(f, s, d=None):
             _librsync.rs_job_free(job)
     finally:
         _librsync.rs_free_sumset(sig)
-    d.seek(0)
     return d
 
 
 def patch(f, d, o=None):
+    """
+    Patch the file `f` using the delta `d`. The patched file will be written to
+    `o`. If `o` is omitted, a temporary file will be used. This function returns
+    the be patched file `o`. All parameters should be file-like objects. `f` is
+    required to be seekable.
+    """
+    if not callable(getattr(f, 'seek', None)):
+        raise ValueError('`f` must be a seekable file-like object')
     if o is None:
         o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
 
@@ -115,5 +143,4 @@ def patch(f, d, o=None):
         _execute(job, d, o)
     finally:
         _librsync.rs_job_free(job)
-    o.seek(0)
     return o

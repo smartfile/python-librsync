@@ -37,5 +37,6 @@ class PatchTestCase(DoubleFileTestCase):
         o = librsync.patch(self.rand1, d)
         self.assertEqual(o.read(), self.rand2.read())
 
+
 if __name__ == '__main__':
     unittest.main()
