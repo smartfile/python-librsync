@@ -3,7 +3,7 @@ python:
   - "2.6"
   - "2.7"
 before_install:
-  - sudo apt-get install -qq librsync
+  - sudo apt-get install -qq librsync1
 install:
   - pip install --timeout=30 pep8 --use-mirrors
   - pip install --timeout=30 https://github.com/dcramer/pyflakes/tarball/master
