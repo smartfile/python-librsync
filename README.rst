@@ -11,8 +11,8 @@ uses and contributes to Open Source software.
 Introduction
 ------------
 
-A ctypes wrapper for librsync. Provides :python:`signature()`,
-:python:`delta()`, and :python:`patch()` functions.
+A ctypes wrapper for librsync. Provides `signature()`, `delta()`, and
+`patch()` functions.
 
 There are three steps necessary to synchronize a file. Two steps are performed
 on the source file and one on the destination.
@@ -49,5 +49,3 @@ two local files.
 
 .. _SmartFile: http://www.smartfile.com/
 .. _Read more: http://www.smartfile.com/open-source.html
-.. role:: python(code)
-    :language: python
