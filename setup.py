@@ -3,7 +3,7 @@
 import os
 from distutils.core import setup
 
-name = 'librsync'
+name = 'python-librsync'
 version = '0.1'
 release = '1'
 versrel = version + '-' + release
@@ -19,7 +19,7 @@ setup(
     author_email = 'btimby@gmail.com',
     maintainer = 'Ben Timby',
     maintainer_email = 'btimby@gmail.com',
-    url = 'http://github.com/smartfile/python-' + name + '/',
+    url = 'http://github.com/smartfile/' + name + '/',
     license = 'MIT',
     requires = [],
     packages = [
