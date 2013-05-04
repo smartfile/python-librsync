@@ -71,7 +71,8 @@ def _execute(job, f, o=None):
         elif result != RS_BLOCKED:
             # TODO: I don't think error reporting works properly.
             raise LibRsyncError(result)
-    o.seek(0)
+    if o:
+        o.seek(0)
     return o
 
 
