@@ -1,6 +1,6 @@
 test:
 	# For testing non-Django projects.
-	coverage run test.py
+	coverage run tests.py
 
 verify:
 	pyflakes -x W librsync
