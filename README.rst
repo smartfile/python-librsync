@@ -1,6 +1,18 @@
-.. figure:: https://travis-ci.org/smartfile/python-librsync.png
-   :alt: Travis CI Status
+.. image:: https://travis-ci.org/smartfile/python-librsync.png
    :target: https://travis-ci.org/smartfile/python-librsync
+   :alt: Travis CI Status
+
+.. image:: https://coveralls.io/repos/smartfile/python-librsync/badge.png?branch=master
+    :target: https://coveralls.io/r/smartfile/python-librsync
+    :alt: Code Coverage
+
+.. image:: https://pypip.in/v/python-librsync/badge.png
+    :target: https://crate.io/packages/python-librsync/
+    :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/python-librsync/badge.png
+    :target: https://crate.io/packages/python-librsync/
+    :alt: Number of PyPI downloads
 
 A `SmartFile`_ Open Source project. `Read more`_ about how SmartFile
 uses and contributes to Open Source software.
@@ -11,8 +23,8 @@ uses and contributes to Open Source software.
 Introduction
 ------------
 
-A ctypes wrapper for librsync. Provides `signature()`, `delta()`, and
-`patch()` functions.
+A ctypes wrapper for librsync. Provides ``signature()``, ``delta()``, and
+``patch()`` functions.
 
 There are three steps necessary to synchronize a file. Two steps are performed
 on the source file and one on the destination.
