@@ -117,12 +117,12 @@ def delta(f, s, d=None):
     if d is None:
         d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
     sig = ctypes.c_void_p()
+    job = _librsync.rs_loadsig_begin(ctypes.byref(sig))
     try:
-        job = _librsync.rs_loadsig_begin(ctypes.byref(sig))
-        try:
-            _execute(job, s)
-        finally:
-            _librsync.rs_job_free(job)
+        _execute(job, s)
+    finally:
+        _librsync.rs_job_free(job)
+    try:
         _librsync.rs_build_hash_table(sig)
         job = _librsync.rs_delta_begin(sig)
         try:
