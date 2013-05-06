@@ -38,25 +38,27 @@ two local files.
 
    .. code:: python
 
-    import librsync
-    
-    # The destination file.
-    dst = file('Resume-v1.0.pdf', 'rb')
-    # The source file.
-    src = file('Resume-v1.2.pdf', 'rb')
-    # Where we will write the synchronized copy.
-    synced = file('Resume-latest.pdf', 'wb')
-    
-    # Step 1: prepare signature of the destination file
-    signature = librsync.signature(dst)
-    
-    # Step 2: prepare a delta of the source file
-    delta = librsync.delta(src, signature)
-    
-    # Step 3: synchronize the files.
-    # In many cases, you would overwrite the destination with the result of
-    # synchronization. However, by default a new file is created.
-    librsync.patch(dst, delta, synced)
+       import librsync
+
+       # The destination file.
+       dst = file('Resume-v1.0.pdf', 'rb')
+
+       # The source file.
+       src = file('Resume-v1.2.pdf', 'rb')
+
+       # Where we will write the synchronized copy.
+       synced = file('Resume-latest.pdf', 'wb')
+
+       # Step 1: prepare signature of the destination file
+       signature = librsync.signature(dst)
+
+       # Step 2: prepare a delta of the source file
+       delta = librsync.delta(src, signature)
+
+       # Step 3: synchronize the files.
+       # In many cases, you would overwrite the destination with the result of
+       # synchronization. However, by default a new file is created.
+       librsync.patch(dst, delta, synced)
 
 Extending
 ---------
