@@ -34,14 +34,15 @@ class Buffer(ctypes.Structure):
         ('avail_out', ctypes.c_size_t),
     ]
 
+_librsync.rs_strerror.restype = ctypes.c_char_p
 
 patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t,
                                   ctypes.POINTER(Buffer))
 
 
-class LibRsyncError(Exception):
+class LibrsyncError(Exception):
     def __init__(self, result):
-        super(LibRsyncError, self).__init__(
+        super(LibrsyncError, self).__init__(
             _librsync.rs_strerror(ctypes.c_int(result)))
 
 
@@ -70,7 +71,7 @@ def _execute(job, f, o=None):
             break
         elif result != RS_BLOCKED:
             # TODO: I don't think error reporting works properly.
-            raise LibRsyncError(result)
+            raise LibrsyncError(result)
     if o and callable(getattr(o, 'seek', None)):
         # As a matter of convenience, rewind the output file.
         o.seek(0)

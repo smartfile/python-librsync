@@ -27,6 +27,11 @@ class DeltaTestCase(DoubleFileTestCase):
         s = librsync.signature(self.rand1)
         d = librsync.delta(self.rand2, s)
 
+    def test_failure(self):
+        "Ensure delta aborts when provided invalid signature."
+        self.assertRaises(librsync.LibrsyncError, librsync.delta, self.rand2,
+                          self.rand1)
+
 
 class PatchTestCase(DoubleFileTestCase):
     def test_patch(self):
@@ -36,6 +41,11 @@ class PatchTestCase(DoubleFileTestCase):
         self.rand2.seek(0)
         o = librsync.patch(self.rand1, d)
         self.assertEqual(o.read(), self.rand2.read())
+
+    def test_failure(self):
+        "Ensure patch aborts when provided invalid delta."
+        self.assertRaises(librsync.LibrsyncError, librsync.patch, self.rand1,
+                          self.rand2)
 
 
 if __name__ == '__main__':
