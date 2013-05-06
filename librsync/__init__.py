@@ -1,4 +1,6 @@
+import os
 import ctypes
+import ctypes.util
 import tempfile
 
 try:
@@ -6,11 +8,21 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-try:
-    _librsync = ctypes.cdll.LoadLibrary('librsync.so.1')
-except OSError:
-    raise ImportError('You must install librsync to use this library. Use your '
-                      'system\'s package manager to install it.')
+if os.name == 'posix':
+    path = ctypes.util.find_library('rsync')
+    if path is None:
+        raise ImportError('Could not find librsync, make sure it is installed')
+    try:
+        _librsync = ctypes.cdll.LoadLibrary(path)
+    except OSError:
+        raise ImportError('Could not load librsync at "%s"' % path)
+elif os.name == 'nt':
+    try:
+        _librsync = ctypes.cdll.librsync
+    except:
+        raise ImportError('Could not load librsync, make sure it is installed')
+else:
+    raise NotImplementedError('Librsync is not supported on your platform')
 
 
 MAX_SPOOL = 1024 ** 2 * 5

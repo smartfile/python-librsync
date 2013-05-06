@@ -42,6 +42,9 @@ class PatchTestCase(DoubleFileTestCase):
         o = librsync.patch(self.rand1, d)
         self.assertEqual(o.read(), self.rand2.read())
 
+    def test_nonseek(self):
+        self.assertRaises(ValueError, librsync.patch, None, self.rand2)
+
     def test_failure(self):
         "Ensure patch aborts when provided invalid delta."
         self.assertRaises(librsync.LibrsyncError, librsync.patch, self.rand1,
