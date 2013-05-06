@@ -58,6 +58,16 @@ two local files.
     # synchronization. However, by default a new file is created.
     librsync.patch(dst, delta, synced)
 
+Extending
+---------
+
+This wrapper only exposes the most common operations that librsync provides. It
+is not meant to be a full wrapper, but should cover most use-cases. You can
+easily extend this wrapper. Information about librsync is available in it's
+manual which is linked below (I wish I had found this BEFORE writing this
+wrapper!)
+
+http://rproxy.samba.org/doxygen/librsync/refman.pdf
 
 .. _SmartFile: http://www.smartfile.com/
 .. _Read more: http://www.smartfile.com/open-source.html
