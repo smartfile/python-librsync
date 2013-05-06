@@ -82,12 +82,21 @@ def _execute(job, f, o=None):
         if result == RS_DONE:
             break
         elif result != RS_BLOCKED:
-            # TODO: I don't think error reporting works properly.
             raise LibrsyncError(result)
+        if buff.avail_in > 0:
+            # There is data left in the input buffer, librsync did not consume
+            # all of it. Rewind the file a bit so we include that data in our
+            # next read. It would be better to simply tack data to the end of
+            # this buffer, but that is very difficult in Python.
+            f.seek(f.tell() - buff.avail_in)
     if o and callable(getattr(o, 'seek', None)):
         # As a matter of convenience, rewind the output file.
         o.seek(0)
     return o
+
+
+def debug(level=7):
+    _librsync.rs_trace_set_level(level)
 
 
 def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
