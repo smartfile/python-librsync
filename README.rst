@@ -36,7 +36,7 @@ on the source file and one on the destination.
 Usually, these steps involve remote systems. Here is an example of synchronizing
 two local files.
 
-   .. code:: python
+.. code:: python
 
     import librsync
 
