@@ -4,6 +4,8 @@ import ctypes.util
 import syslog
 import tempfile
 
+from funcutils import wraps
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -110,9 +112,9 @@ def seekable(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         s = args[0]
-        assert callable(getattr(s, 'seek', None)), 'Must provide seekable '
-                                                   'file-like object'
-        return f(*args, **kwargs
+        assert callable(getattr(s, 'seek', None)), 'Must provide seekable ' \
+            'file-like object'
+        return f(*args, **kwargs)
     return wrapper
 
 
