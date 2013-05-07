@@ -4,7 +4,7 @@ import ctypes.util
 import syslog
 import tempfile
 
-from funcutils import wraps
+from functools import wraps
 
 try:
     from cStringIO import StringIO

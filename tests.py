@@ -10,6 +10,9 @@ class TraceLevelTestCase(unittest.TestCase):
     def test_set(self):
         librsync.debug()
 
+    def test_set_invalid(self):
+        self.assertRaises(AssertionError, librsync.debug, level=40)
+
 
 class SingleFileTestCase(unittest.TestCase):
     def setUp(self):
@@ -48,7 +51,7 @@ class PatchTestCase(DoubleFileTestCase):
         self.assertEqual(o.read(), self.rand2.read())
 
     def test_nonseek(self):
-        self.assertRaises(ValueError, librsync.patch, None, self.rand2)
+        self.assertRaises(AssertionError, librsync.patch, None, self.rand2)
 
     def test_failure(self):
         "Ensure patch aborts when provided invalid delta."
