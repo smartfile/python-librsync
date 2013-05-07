@@ -46,7 +46,46 @@ class Buffer(ctypes.Structure):
         ('avail_out', ctypes.c_size_t),
     ]
 
+# char const *rs_strerror(rs_result r);
 _librsync.rs_strerror.restype = ctypes.c_char_p
+_librsync.rs_strerror.argtypes = (ctypes.c_int, )
+
+# rs_job_t *rs_sig_begin(size_t new_block_len, size_t strong_sum_len);
+_librsync.rs_sig_begin.restype = ctypes.c_void_p
+_librsync.rs_sig_begin.argtypes = (ctypes.c_size_t, ctypes.c_size_t, )
+
+# rs_job_t *rs_loadsig_begin(rs_signature_t **);
+_librsync.rs_loadsig_begin.restype = ctypes.c_void_p
+_librsync.rs_loadsig_begin.argtypes = (ctypes.c_void_p, )
+
+# rs_job_t *rs_delta_begin(rs_signature_t *);
+_librsync.rs_delta_begin.restype = ctypes.c_void_p
+_librsync.rs_delta_begin.argtypes = (ctypes.c_void_p, )
+
+# rs_job_t *rs_patch_begin(rs_copy_cb *, void *copy_arg);
+_librsync.rs_patch_begin.restype = ctypes.c_void_p
+_librsync.rs_patch_begin.argtypes = (ctypes.c_void_p, ctypes.c_void_p, )
+
+# rs_result rs_build_hash_table(rs_signature_t* sums);
+_librsync.rs_build_hash_table.restype = ctypes.c_size_t
+_librsync.rs_build_hash_table.argtypes = (ctypes.c_void_p, )
+
+# rs_result rs_job_iter(rs_job_t *, rs_buffers_t *);
+_librsync.rs_job_iter.restype = ctypes.c_int
+_librsync.rs_job_iter.argtypes = (ctypes.c_void_p, ctypes.c_void_p, )
+
+# void rs_trace_set_level(rs_loglevel level);
+_librsync.rs_trace_set_level.restype = None
+_librsync.rs_trace_set_level.argtypes = (ctypes.c_int, )
+
+# void rs_free_sumset(rs_signature_t *);
+_librsync.rs_free_sumset.restype = None
+_librsync.rs_free_sumset.argtypes = (ctypes.c_void_p, )
+
+# rs_result rs_job_free(rs_job_t *);
+_librsync.rs_job_free.restype = ctypes.c_int
+_librsync.rs_job_free.argtypes = (ctypes.c_void_p, )
+
 
 patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t,
                                   ctypes.POINTER(Buffer))
