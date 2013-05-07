@@ -35,6 +35,9 @@ RS_DEFAULT_STRONG_LEN = 8
 RS_DEFAULT_BLOCK_LEN = 2048
 
 
+# DEFINES FROM librsync.h:
+#-------------------------
+
 # librsync.h: rs_buffers_s
 class Buffer(ctypes.Structure):
     _fields_ = [
@@ -86,7 +89,7 @@ _librsync.rs_free_sumset.argtypes = (ctypes.c_void_p, )
 _librsync.rs_job_free.restype = ctypes.c_int
 _librsync.rs_job_free.argtypes = (ctypes.c_void_p, )
 
-
+# A function declaration for our read callback.
 patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t,
                                   ctypes.POINTER(Buffer))
 
@@ -195,9 +198,9 @@ def patch(f, d, o=None):
         o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
 
     @patch_callback
-    def read_cb(opaque, pos, len, buff):
+    def read_cb(pos, length, buff):
         f.seek(pos)
-        block = f.read(len)
+        block = f.read(length)
         buff.next_in = ctypes.c_char_p(block)
         buff.avail_in = ctypes.c_size_t(len(block))
 
