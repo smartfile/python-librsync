@@ -1,6 +1,7 @@
 import os
 import ctypes
 import ctypes.util
+import syslog
 import tempfile
 
 try:
@@ -26,6 +27,11 @@ else:
 
 
 MAX_SPOOL = 1024 ** 2 * 5
+
+TRACE_LEVELS = (
+    syslog.LOG_EMERG, syslog.LOG_ALERT, syslog.LOG_CRIT, syslog.LOG_ERR,
+    syslog.LOG_WARNING, syslog.LOG_NOTICE, syslog.LOG_INFO, syslog.LOG_DEBUG,
+)
 
 RS_DONE = 0
 RS_BLOCKED = 1
@@ -100,6 +106,16 @@ class LibrsyncError(Exception):
             _librsync.rs_strerror(ctypes.c_int(result)))
 
 
+def seekable(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        s = args[0]
+        assert callable(getattr(s, 'seek', None)), 'Must provide seekable '
+                                                   'file-like object'
+        return f(*args, **kwargs
+    return wrapper
+
+
 def _execute(job, f, o=None):
     """
     Executes a librsync "job" by reading bytes from `f` and writing results to
@@ -137,10 +153,12 @@ def _execute(job, f, o=None):
     return o
 
 
-def debug(level=7):
+def debug(level=syslog.LOG_DEBUG):
+    assert level in TRACE_LEVELS, "Invalid log level %i" % level
     _librsync.rs_trace_set_level(level)
 
 
+@seekable
 def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
     """
     Generate a signature for the file `f`. The signature will be written to `s`.
@@ -158,6 +176,7 @@ def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
     return s
 
 
+@seekable
 def delta(f, s, d=None):
     """
     Create a delta for the file `f` using the signature read from `s`. The delta
@@ -185,6 +204,7 @@ def delta(f, s, d=None):
     return d
 
 
+@seekable
 def patch(f, d, o=None):
     """
     Patch the file `f` using the delta `d`. The patched file will be written to
@@ -192,8 +212,6 @@ def patch(f, d, o=None):
     the be patched file `o`. All parameters should be file-like objects. `f` is
     required to be seekable.
     """
-    if not callable(getattr(f, 'seek', None)):
-        raise ValueError('`f` must be a seekable file-like object')
     if o is None:
         o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
 

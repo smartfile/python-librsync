@@ -6,6 +6,11 @@ import librsync
 from StringIO import StringIO
 
 
+class TraceLevelTestCase(unittest.TestCase):
+    def test_set(self):
+        librsync.debug()
+
+
 class SingleFileTestCase(unittest.TestCase):
     def setUp(self):
         self.rand = StringIO(os.urandom(1024**2))
