@@ -1,3 +1,9 @@
+.. figure:: https://d2xtrvzo9unrru.cloudfront.net/brands/smartfile/logo.png
+   :alt: SmartFile
+
+A `SmartFile`_ Open Source project. `Read more`_ about how SmartFile
+uses and contributes to Open Source software.
+
 .. image:: https://travis-ci.org/smartfile/python-librsync.png
    :target: https://travis-ci.org/smartfile/python-librsync
    :alt: Travis CI Status
@@ -13,12 +19,6 @@
 .. image:: https://pypip.in/d/python-librsync/badge.png
     :target: https://crate.io/packages/python-librsync/
     :alt: Number of PyPI downloads
-
-A `SmartFile`_ Open Source project. `Read more`_ about how SmartFile
-uses and contributes to Open Source software.
-
-.. figure:: http://www.smartfile.com/images/logo.jpg
-   :alt: SmartFile
 
 Introduction
 ------------
