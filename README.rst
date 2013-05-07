@@ -1,4 +1,4 @@
-.. figure:: https://d2xtrvzo9unrru.cloudfront.net/brands/smartfile/logo.png
+.. image:: https://d2xtrvzo9unrru.cloudfront.net/brands/smartfile/logo.png
    :alt: SmartFile
 
 A `SmartFile`_ Open Source project. `Read more`_ about how SmartFile
