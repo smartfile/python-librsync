@@ -5,7 +5,7 @@ from distutils.core import setup
 
 name = 'python-librsync'
 version = '0.1'
-release = '4'
+release = '5'
 versrel = version + '-' + release
 long_description = open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'r').read()
 
