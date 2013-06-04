@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get install -qq librsync1
 install:
   - pip install --timeout=30 pep8 --use-mirrors
-  - pip install --timeout=30 https://github.com/dcramer/pyflakes/tarball/master
+  - pip install --timeout=30 pyflakes --use-mirrors
   - pip install --timeout=30 -r requirements.txt --use-mirrors
   - pip install --timeout=30 -q -e . --use-mirrors
 before_script:
