@@ -7,8 +7,7 @@ name = 'python-librsync'
 version = '0.1'
 release = '4'
 versrel = version + '-' + release
-readme = os.path.join(os.path.dirname(__file__), 'README.rst')
-long_description = file(readme).read()
+long_description = open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'r').read()
 
 setup(
     name = name,

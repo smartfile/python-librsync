@@ -6,10 +6,6 @@ import tempfile
 
 from functools import wraps
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 if os.name == 'posix':
     path = ctypes.util.find_library('rsync')
@@ -169,7 +165,7 @@ def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
     optional `block_size` parameter.
     """
     if s is None:
-        s = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
+        s = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
     job = _librsync.rs_sig_begin(block_size, RS_DEFAULT_STRONG_LEN)
     try:
         _execute(job, f, s)
@@ -187,7 +183,7 @@ def delta(f, s, d=None):
     objects.
     """
     if d is None:
-        d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
+        d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
     sig = ctypes.c_void_p()
     job = _librsync.rs_loadsig_begin(ctypes.byref(sig))
     try:
@@ -215,7 +211,7 @@ def patch(f, d, o=None):
     required to be seekable.
     """
     if o is None:
-        o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL)
+        o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
 
     @patch_callback
     def read_cb(pos, length, buff):

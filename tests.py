@@ -3,7 +3,10 @@ import unittest
 
 import librsync
 
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import BytesIO as StringIO
 
 
 class TraceLevelTestCase(unittest.TestCase):
