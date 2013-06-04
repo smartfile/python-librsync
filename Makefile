@@ -3,7 +3,7 @@ test:
 	coverage run tests.py
 
 verify:
-	pyflakes -x W librsync
+	pyflakes librsync
 	pep8 --exclude=migrations --ignore=E501,E225 librsync
 
 install:
