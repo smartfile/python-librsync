@@ -100,8 +100,8 @@ patch_callback = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_void_p, ctypes.c_longlo
 
 class LibrsyncError(Exception):
     def __init__(self, r):
-        super(LibrsyncError, self).__init__(
-              _librsync.rs_strerror(ctypes.c_int(r)))
+        super(LibrsyncError, self).__init__(_librsync.rs_strerror(
+            ctypes.c_int(r)))
 
 
 def seekable(f):
@@ -193,7 +193,7 @@ def delta(f, s, d=None):
             _librsync.rs_job_free(job)
         r = _librsync.rs_build_hash_table(sig)
         if r != RS_DONE:
-            raise LibrsyncException(r)
+            raise LibrsyncError(r)
         job = _librsync.rs_delta_begin(sig)
         try:
             _execute(job, f, d)
@@ -229,4 +229,3 @@ def patch(f, d, o=None):
     finally:
         _librsync.rs_job_free(job)
     return o
-
