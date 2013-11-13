@@ -62,5 +62,12 @@ class PatchTestCase(DoubleFileTestCase):
                           self.rand2)
 
 
+class BigPatchTestCase(PatchTestCase):
+    def setUp(self):
+        "Use large enough test files to cause temp files to hit disk."
+        self.rand1 = StringIO(os.urandom(1024**2*5))
+        self.rand2 = StringIO(os.urandom(1024**2*5))
+
+
 if __name__ == '__main__':
     unittest.main()

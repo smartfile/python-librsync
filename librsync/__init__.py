@@ -94,14 +94,14 @@ _librsync.rs_job_free.restype = ctypes.c_int
 _librsync.rs_job_free.argtypes = (ctypes.c_void_p, )
 
 # A function declaration for our read callback.
-patch_callback = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t,
-                                  ctypes.POINTER(Buffer))
+patch_callback = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_void_p, ctypes.c_longlong,
+                                  ctypes.c_size_t, ctypes.POINTER(Buffer))
 
 
 class LibrsyncError(Exception):
-    def __init__(self, result):
+    def __init__(self, r):
         super(LibrsyncError, self).__init__(
-            _librsync.rs_strerror(ctypes.c_int(result)))
+              _librsync.rs_strerror(ctypes.c_int(r)))
 
 
 def seekable(f):
@@ -132,13 +132,13 @@ def _execute(job, f, o=None):
         # Set up our buffer for output.
         buff.next_out = ctypes.cast(out, ctypes.c_char_p)
         buff.avail_out = ctypes.c_size_t(RS_JOB_BLOCKSIZE)
-        result = _librsync.rs_job_iter(job, ctypes.byref(buff))
+        r = _librsync.rs_job_iter(job, ctypes.byref(buff))
         if o:
             o.write(out.raw[:RS_JOB_BLOCKSIZE - buff.avail_out])
-        if result == RS_DONE:
+        if r == RS_DONE:
             break
-        elif result != RS_BLOCKED:
-            raise LibrsyncError(result)
+        elif r != RS_BLOCKED:
+            raise LibrsyncError(r)
         if buff.avail_in > 0:
             # There is data left in the input buffer, librsync did not consume
             # all of it. Rewind the file a bit so we include that data in our
@@ -165,7 +165,7 @@ def signature(f, s=None, block_size=RS_DEFAULT_BLOCK_LEN):
     optional `block_size` parameter.
     """
     if s is None:
-        s = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
+        s = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb+')
     job = _librsync.rs_sig_begin(block_size, RS_DEFAULT_STRONG_LEN)
     try:
         _execute(job, f, s)
@@ -183,15 +183,17 @@ def delta(f, s, d=None):
     objects.
     """
     if d is None:
-        d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
+        d = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb+')
     sig = ctypes.c_void_p()
-    job = _librsync.rs_loadsig_begin(ctypes.byref(sig))
     try:
-        _execute(job, s)
-    finally:
-        _librsync.rs_job_free(job)
-    try:
-        _librsync.rs_build_hash_table(sig)
+        job = _librsync.rs_loadsig_begin(ctypes.byref(sig))
+        try:
+            _execute(job, s)
+        finally:
+            _librsync.rs_job_free(job)
+        r = _librsync.rs_build_hash_table(sig)
+        if r != RS_DONE:
+            raise LibrsyncException(r)
         job = _librsync.rs_delta_begin(sig)
         try:
             _execute(job, f, d)
@@ -211,7 +213,7 @@ def patch(f, d, o=None):
     required to be seekable.
     """
     if o is None:
-        o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb')
+        o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb+')
 
     @patch_callback
     def read_cb(pos, length, buff):
@@ -219,6 +221,7 @@ def patch(f, d, o=None):
         block = f.read(length)
         buff.next_in = ctypes.c_char_p(block)
         buff.avail_in = ctypes.c_size_t(len(block))
+        return RS_DONE
 
     job = _librsync.rs_patch_begin(read_cb, None)
     try:
@@ -226,3 +229,4 @@ def patch(f, d, o=None):
     finally:
         _librsync.rs_job_free(job)
     return o
+
