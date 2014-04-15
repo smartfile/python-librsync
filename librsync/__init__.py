@@ -39,8 +39,9 @@ RS_DEFAULT_STRONG_LEN = 8
 RS_DEFAULT_BLOCK_LEN = 2048
 
 
-# DEFINES FROM librsync.h:
-#-------------------------
+#############################
+#  DEFINES FROM librsync.h  #
+#############################
 
 # librsync.h: rs_buffers_s
 class Buffer(ctypes.Structure):
