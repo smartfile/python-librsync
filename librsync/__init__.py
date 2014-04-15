@@ -216,7 +216,7 @@ def patch(f, d, o=None):
         o = tempfile.SpooledTemporaryFile(max_size=MAX_SPOOL, mode='wb+')
 
     @patch_callback
-    def read_cb(pos, length, buff):
+    def read_cb(opaque, pos, length, buff):
         f.seek(pos)
         block = f.read(length)
         buff.next_in = ctypes.c_char_p(block)
