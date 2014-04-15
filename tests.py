@@ -69,5 +69,12 @@ class BigPatchTestCase(PatchTestCase):
         self.rand2 = StringIO(os.urandom(1024**2*5))
 
 
+class Issue3TestCase(PatchTestCase):
+    def setUp(self):
+        "Use test data provided in issue #3."
+        self.rand1 = StringIO('Text.')
+        self.rand2 = StringIO('New text.\nText.')
+
+
 if __name__ == '__main__':
     unittest.main()
