@@ -219,9 +219,12 @@ def patch(f, d, o=None):
     @patch_callback
     def read_cb(opaque, pos, length, buff):
         f.seek(pos)
-        block = f.read(length)
-        buff.next_in = ctypes.c_char_p(block)
-        buff.avail_in = ctypes.c_size_t(len(block))
+        size_p = ctypes.cast(length, ctypes.POINTER(ctypes.c_size_t)).contents
+        size = size_p.value
+        block = f.read(size)
+        size_p.value = len(block)
+        buff_p = ctypes.cast(buff, ctypes.POINTER(ctypes.c_char_p)).contents
+        buff_p.value = block
         return RS_DONE
 
     job = _librsync.rs_patch_begin(read_cb, None)
