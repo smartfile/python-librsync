@@ -76,5 +76,18 @@ class Issue3TestCase(PatchTestCase):
         self.rand2 = StringIO('New text.\nText.')
 
 
+class SimpleStringTestCase(unittest.TestCase):
+    def setUp(self):
+        self.src = 'FF'
+        self.dst = 'FF123FF'
+
+    def test_string_patch(self):
+        src_sig = librsync.signature(StringIO(self.src))
+        delta = librsync.delta(StringIO(self.dst), src_sig).read()
+        out = librsync.patch(StringIO(self.src), StringIO(delta))
+
+        self.assertEqual(self.dst, out.read())
+
+
 if __name__ == '__main__':
     unittest.main()
