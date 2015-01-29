@@ -16,3 +16,5 @@ script:
   - make test
 after_success:
   - coveralls
+notifications:
+  slack: smartfile:tbDIPzVJIPBpSz29kQw6b8RQ
