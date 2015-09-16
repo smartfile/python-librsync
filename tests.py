@@ -4,9 +4,9 @@ import unittest
 import librsync
 
 try:
-    from StringIO import StringIO
+    from BytesIO import BytesIO
 except ImportError:
-    from io import BytesIO as StringIO
+    from io import BytesIO
 
 
 class TraceLevelTestCase(unittest.TestCase):
@@ -19,13 +19,13 @@ class TraceLevelTestCase(unittest.TestCase):
 
 class SingleFileTestCase(unittest.TestCase):
     def setUp(self):
-        self.rand = StringIO(os.urandom(1024**2))
+        self.rand = BytesIO(os.urandom(1024**2))
 
 
 class DoubleFileTestCase(unittest.TestCase):
     def setUp(self):
-        self.rand1 = StringIO(os.urandom(1024**2))
-        self.rand2 = StringIO(os.urandom(1024**2))
+        self.rand1 = BytesIO(os.urandom(1024**2))
+        self.rand2 = BytesIO(os.urandom(1024**2))
 
 
 class SignatureTestCase(SingleFileTestCase):
@@ -65,26 +65,26 @@ class PatchTestCase(DoubleFileTestCase):
 class BigPatchTestCase(PatchTestCase):
     def setUp(self):
         "Use large enough test files to cause temp files to hit disk."
-        self.rand1 = StringIO(os.urandom(1024**2*5))
-        self.rand2 = StringIO(os.urandom(1024**2*5))
+        self.rand1 = BytesIO(os.urandom(1024**2*5))
+        self.rand2 = BytesIO(os.urandom(1024**2*5))
 
 
 class Issue3TestCase(PatchTestCase):
     def setUp(self):
         "Use test data provided in issue #3."
-        self.rand1 = StringIO('Text.')
-        self.rand2 = StringIO('New text.\nText.')
+        self.rand1 = BytesIO(b'Text.')
+        self.rand2 = BytesIO(b'New text.\nText.')
 
 
 class SimpleStringTestCase(unittest.TestCase):
     def setUp(self):
-        self.src = 'FF'
-        self.dst = 'FF123FF'
+        self.src = b'FF'
+        self.dst = b'FF123FF'
 
     def test_string_patch(self):
-        src_sig = librsync.signature(StringIO(self.src))
-        delta = librsync.delta(StringIO(self.dst), src_sig).read()
-        out = librsync.patch(StringIO(self.src), StringIO(delta))
+        src_sig = librsync.signature(BytesIO(self.src))
+        delta = librsync.delta(BytesIO(self.dst), src_sig).read()
+        out = librsync.patch(BytesIO(self.src), BytesIO(delta))
 
         self.assertEqual(self.dst, out.read())
 
