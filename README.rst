@@ -41,13 +41,13 @@ two local files.
     import librsync
 
     # The destination file.
-    dst = file('Resume-v1.0.pdf', 'rb')
+    dst = open('Resume-v1.0.pdf', 'rb')
 
     # The source file.
-    src = file('Resume-v1.2.pdf', 'rb')
+    src = open('Resume-v1.2.pdf', 'rb')
 
     # Where we will write the synchronized copy.
-    synced = file('Resume-latest.pdf', 'wb')
+    synced = open('Resume-latest.pdf', 'wb')
 
     # Step 1: prepare signature of the destination file
     signature = librsync.signature(dst)
